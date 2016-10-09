@@ -1,6 +1,6 @@
 # Scrabble-Cheater
 
-# Description #
+## Description ##
 This is a common Scrabble Cheater reading from an input file (origin: http://www.becomeawordgameexpert.com/dictionary.htm), coded in Java.
 
 ## Usage ##
