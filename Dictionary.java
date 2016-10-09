@@ -14,14 +14,18 @@ public class Dictionary {
 	
 	public String[] getWords() throws IOException{
 		FileReader fr = new FileReader(filename);
-		String words = "";
-		while(fr.ready()){
-			words += (char)fr.read();
+		BufferedReader br = new BufferedReader(fr);
+		ArrayList<String> words = new ArrayList<String>();
+		String line = "";
+		while(br.ready()){
+			line += br.readLine();
+			words.addAll(Arrays.asList(line.split(" ")));
+			
 		}
-		fr.close();
+		br.close();
 		
-		String[] wordArray = words.split(" ");
-		
+		String[] wordArray = words.toArray(new String[words.size()]);
+
 		return wordArray;
 	}
 	
@@ -41,9 +45,12 @@ public class Dictionary {
 					values.add(word);
 					hashTable[hashValue] = values;
 				} else{
+					if(hashValue<0){
+						hashValue = prime-1;
+					}
 					while(hashTable[hashValue]!=null &&
 						  hashTable[hashValue].size()>=16){
-						if(hashValue>=0)
+						if(hashValue>0)
 							hashValue--;
 						else
 							hashValue = prime-1;
@@ -74,7 +81,7 @@ public class Dictionary {
 			else
 				hashValue = prime-1;
 		}
-		return new String[]{"The word is not in here"};
+		return new String[]{"The word is not in here."};
 		
 	}
 	
@@ -84,7 +91,11 @@ public class Dictionary {
 		LinkedList<String> values = new LinkedList<String>(); 
 		if(hashTable[hashValue]==null)
 			return null;
-		if(hashTable[hashValue].size()<16&&hashTable[hashValue+1].size()<16)
+		int nextHashValue = hashValue+1;
+		if(nextHashValue>=prime){
+			nextHashValue=0;
+		}
+		if(hashTable[hashValue].size()<16&&hashTable[nextHashValue].size()<16)
 			return hashTable[hashValue];
 		else if(hashTable[hashValue].size()<16){
 			for(String word: hashTable[hashValue]){
@@ -98,8 +109,15 @@ public class Dictionary {
 				if(getHashValue(word)==origHashValue)
 					values.add(word);
 			}
-			if(hashTable[hashValue].size()==16)
-				hashValue--;
+			if(hashTable[hashValue].size()==16){
+				if(hashValue>0){
+					hashValue--;
+				}
+				else{
+					hashValue = prime-1;
+				}
+			}
+
 			else
 				return values;
 			// termination condition for the case that all lists are filled
@@ -135,14 +153,14 @@ public class Dictionary {
 		System.out.println("Number of collisions: "+collisions);
 		System.out.println("Position of longest chain: "+maxChainPos
 				          +", Length: "+maxChain);
-		System.out.println("Chain: "+ longestChain);
+		System.out.println("Longest chain: \n"+ longestChain);
 		System.out.println("Prime: "+prime);
 	}
 	
 	public String chainToString(String[] words){
 		String result = "";
 		for(String word: words){
-			result += word + " ";
+			result += word + "\n";
 		}
 		return result;
 	}
@@ -150,7 +168,7 @@ public class Dictionary {
 	public String chainToString(List<String> words){
 		String result = "";
 		for(String word: words){
-			result += word + " ";
+			result += word + "\n";
 		}
 		return result;
 	}
@@ -171,7 +189,11 @@ public class Dictionary {
 		return str1.equals(str2);
 	}
 	
-	public String normalize(String str){
+	
+	public static String normalize(String str){
+		if(str.length()<2){
+			return str;
+		}
 		char[] chars = str.toCharArray();
 		Arrays.sort(chars);
 		return new String(chars);
@@ -203,30 +225,8 @@ public class Dictionary {
 		return -1;
 	}
 	
-	public static void main(String[] args) throws IOException{
+//	public static void main(String[] args) throws IOException{
 //		Dictionary s = new Dictionary("C:\\Users\\Jule\\Documents\\UNI\\Semester 2\\Info2\\Eclipse-Workplace\\Scrabble Cheater\\src\\scrabble_words.txt");
-		System.out.println("Informatik".substring(0, 0));
-//		for(String str: words){
-//			System.out.println(str);
-//		}
 //		s.printTableStats();
-//		System.out.println(s.chainToString(s.findWord("Alien")));
-
-	}
-	
-//	public String[] generatePermutations(String word){
-//		ArrayList <String> perms = new ArrayList<>();
-//		perms.add()
 //	}
-	
-	public void perms(String prefix, String rest){
-		if (rest.equals(""))
-			System.out.println(prefix);
-		else{
-			for (int i = 0; i<rest.length(); i++){
-				perms(prefix + rest.charAt(i), rest.substring(0, i) + rest.substring(i+1, rest.length()));
-			}
-		}
-			
-	}
 }
